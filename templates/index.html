@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Crop and Yield Prediction</title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Source+Code+Pro&display=swap"
+    />
+    <style>
+      body {
+        font-family: "Source Code Pro", monospace;
+        background-color: #1e1e1e;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: row;
+        height: 100vh;
+        color: #ffffff;
+        background-image: url(../static/demo5.jpg);
+        background-size: cover;
+        overflow: hidden;
+      }
+
+      .container {
+        display: flex;
+        flex-direction: row;
+        /* justify-content: space-between; */
+        height: 90%;
+        margin-right: 30px;
+        margin-top: 35px;
+        max-width: 1000px;
+        width: 110%;
+        background-color: #333333;
+        border-radius: 8px;
+        overflow: hidden;
+        background-size: cover;
+      }
+
+      .Heading {
+        padding-top: 5%;
+        padding-left: 30%;
+        /* padding-bottom: 7%; */
+        font-size: 50px;
+        color: green;
+        text-shadow: 2px 0.5px;
+        font-weight: bold;
+        opacity: 0;
+      }
+
+      .form-container {
+        width: 50%;
+        padding: 20px;
+        box-sizing: border-box;
+      }
+
+      .result-container {
+        width: 50%;
+        padding: 20px;
+        box-sizing: border-box;
+        overflow-y: auto;
+      }
+
+      form {
+        max-width: 400px;
+        width: 100%;
+        margin: 0 auto;
+      }
+
+      h2 {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      input[type="text"] {
+        width: 94%;
+        margin-bottom: 10px;
+        padding: 10px;
+        border: 1px solid #cccccc;
+        border-radius: 4px;
+      }
+      input[type="number"] {
+        width: 94%;
+        margin-bottom: 10px;
+        padding: 10px;
+        border: 1px solid #cccccc;
+        border-radius: 4px;
+      }
+
+      select {
+        width: 100%;
+        margin-bottom: 10px;
+        padding: 10px;
+        border: 1px solid #cccccc;
+        border-radius: 4px;
+      }
+
+      button[type="submit"] {
+        width: 100%;
+        background-color: #444444;
+        color: whitesmoke;
+        padding: 14px 20px;
+        margin: 8px 0;
+        border: 2px solid #008000;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      button[type="submit"]:hover {
+        background-color: #45a049;
+      }
+
+      .btn-close {
+        width: 95%;
+        background-color: #444444;
+        color: whitesmoke;
+        padding: 14px 20px;
+        margin: 15% 0;
+        margin-left: 3%;
+        border: 2px solid #e54132;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      .btn-close:hover {
+        background-color: #de4c4c;
+      }
+
+      h3 {
+        margin-top: 20px;
+      }
+
+      p {
+        font-size: 16px;
+        margin-bottom: 8px;
+      }
+
+      .resultdiv {
+        background-color: #444444;
+        padding: 20px;
+        border-radius: 8px;
+        height: 600px;
+      }
+
+      .glowing-bar-loader {
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+        height: 300px;
+        /* Adjust height as needed */
+      }
+
+      .bar {
+        padding: 10px;
+        width: 20px;
+        /* Adjust width as needed */
+        height: 60px;
+        /* Minimum height of bars */
+        background-color: #3498db;
+        margin: 0 5px;
+        animation: bar-glow 1.5s infinite alternate ease-in-out;
+      }
+
+      .bar:nth-child(2) {
+        animation-delay: 0.25s;
+      }
+
+      .bar:nth-child(3) {
+        animation-delay: 0.5s;
+      }
+
+      .bar:nth-child(4) {
+        animation-delay: 0.75s;
+      }
+
+      @keyframes bar-glow {
+        0% {
+          background-color: #3498db;
+          /* Original color */
+          box-shadow: 0 0 10px #3498db;
+          /* Initial shadow */
+        }
+
+        100% {
+          background-color: #1abc9c;
+          /* New color */
+          box-shadow: 0 0 10px #1abc9c, 0 0 20px #1abc9c, 0 0 30px #1abc9c;
+          /* Bigger shadow */
+        }
+      }
+
+      .loader {
+        font-family: Arial, sans-serif;
+        font-size: 24px;
+        font-weight: bold;
+        display: inline-block;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .loader::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          120deg,
+          transparent,
+          rgba(75, 75, 75, 0.8),
+          transparent
+        );
+        animation: shine 2s infinite;
+      }
+
+      @keyframes shine {
+        0% {
+          left: -100%;
+        }
+        50% {
+          left: 100%;
+        }
+        100% {
+          left: 100%;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="Context">
+      <div class="Heading">
+        Optimize Farming
+        <hr style="width: 470px; border: 1px solid green" />
+      </div>
+      <div
+        class="Intro"
+        style="
+          font-size: 3rem;
+          padding-left: 60px;
+          color: white;
+          font-weight: bold;
+          padding-bottom: 40px;
+        "
+      >
+        <span style="font-size: 2rem"
+          ><span style="color: green; font-size: 4rem">C</span>rop Yield
+          Prediction</span
+        >
+        <br />
+        Nurturing Tomorrow's Harvest with Precision Insights.
+      </div>
+    </div>
+    <div class="container">
+      <div class="form-container">
+        <form id="prediction-form" action="/predict" method="post">
+          <h2>Crop and Yield Prediction Form</h2>
+          <select
+            id="SoilType"
+            name="SoilType"
+            onchange="changeDropDownValue(this.value)"
+            value="{{ request.form.Rainfall if request.form.Rainfall }}"
+            required
+          >
+            <option value="0">Select type of soil</option>
+            <option value="1">Alluvial Soil</option>
+            <option value="2">Alluvial & Red/Yellow Soil</option>
+            <option value="8">Black Soil</option>
+            <option value="3">Coastal Alluvial Soil</option>
+            <option value="9">Laterite</option>
+            <option value="4">Mountainous Soil</option>
+            <option value="5">Red Soil</option>
+            <option value="6">Red and Laterite Soil</option>
+            <option value="7">Sandy Soil</option>
+            <option value="10">Terai Alluvial Soil</option>
+          </select>
+
+          <select
+            id="option"
+            name="District"
+            value="{{ request.form.Rainfall if request.form.Rainfall }}"
+            required
+          >
+            <option value="none" selected disabled hidden>
+              Select District
+            </option>
+          </select>
+          <input
+            type="text"
+            name="Humidity"
+            placeholder="Humidity (%)"
+            id="humidity"
+            value="{{ request.form.Humidity if request.form.Humidity }}"
+            readonly
+          />
+          <input
+            type="text"
+            name="Temperature"
+            placeholder="Temperature (°C)"
+            id="temp"
+            name="temperature"
+            value="{{ request.form.Temperature if request.form.Temperature }}"
+            readonly
+          />
+          <input
+            type="text"
+            name="Rainfall"
+            placeholder="Rainfall (mm)"
+            value="{{ request.form.Rainfall if request.form.Rainfall }}"
+            id="rainfall"
+          />
+          <input
+            type="text"
+            name="N"
+            placeholder="Nitrogen (N)"
+            value="{{ request.form.N if request.form.N }}"
+            required
+          />
+          <input
+            type="text"
+            name="P"
+            placeholder="Phosphorus (P)"
+            value="{{ request.form.P if request.form.P }}"
+            required
+          />
+          <input
+            type="text"
+            name="K"
+            placeholder="Potassium (K)"
+            value="{{ request.form.K if request.form.K }}"
+            required
+          />
+          <input
+            type="text"
+            name="pH"
+            placeholder="Soil pH"
+            value="{{ request.form.pH if request.form.pH }}"
+          />
+
+          <button id="predict-button" type="submit">PREDICT</button>
+        </form>
+      </div>
+      <div class="result-container">
+        {% if prediction_text and (not valid) %}
+        <div class="error-message">
+          <h3>Error: Invalid Input!</h3>
+          <p>{{ prediction_text }}</p>
+          <button class="btn-close" onclick="nav()">CLOSE&nbsp;</button>
+        </div>
+
+        {% elif prediction_text and valid %}
+        <h3>Prediction Results:</h3>
+        <p>
+          Best Fit Crop: {{ prediction_text[0][0] }}, Expected Yield: {{
+          prediction_text[0][1] }} kg/ha
+        </p>
+        {% for crop, yield in prediction_text[1:] %}
+        <p>Alternative Crop: {{ crop }}, Expected Yield: {{ yield }} kg/ha</p>
+        {% endfor %}
+
+        <button class="btn-close" onclick="nav()">CLOSE&nbsp;</button>
+      </div>
+      {% else %}
+      <div class="glowing-bar-loader" id="glow-bar">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+      </div>
+      {% endif %}
+    </div>
+
+    <script>
+      let commonValues = {
+        1: [
+          "--Select-District--",
+          "Alipurduar",
+          "Murshidabad",
+          "Purba_Medinipur",
+          "Hooghly",
+          "Kolkata",
+          "Nadia",
+          "Howrah",
+          "Dakshin_Dinajpur",
+        ],
+        2: ["--Select-District--", "Jalpaiguri", "North_24_Parganas"],
+        3: ["--Select-District--", "South_24_Parganas"],
+        4: ["--Select-District--", "Kalimpong", "Darjeeling"],
+        5: [
+          "--Select-District--",
+          "Paschim_Medinipur (West_Medinipur)",
+          "Purulia",
+        ],
+        6: ["--Select-District--", "Siliguri", "Birbhum", "Malda", "Purulia"],
+        7: ["--Select-District--", "Bardhaman", "Cooch_Behar"],
+        8: ["--Select-District--", "Bankura"],
+        9: ["--Select-District--", "Jhargram"],
+        10: ["--Select-District--", "Uttar_Dinajpur"],
+      };
+
+      function changeDropDownValue(value) {
+        if (value == 0) {
+          document.getElementById("option").innerHTML =
+            "<option>" + Please_select_a_crop + "</option> ";
+        } else {
+          let commonOptions = "";
+          for (categoryID in commonValues[value]) {
+            commonOptions +=
+              "<option>" + commonValues[value][categoryID] + "</option>";
+          }
+          document.getElementById("option").innerHTML = commonOptions;
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const submitButton = document.getElementById("predict-button");
+
+        submitButton.addEventListener("click", function () {
+          const glowBar = document.getElementById("glow-bar");
+          glowBar.innerHTML = `<h4 class="loader">Analysing...</h4>`;
+          setTimeout(function () {
+            glowBar.innerHTML = `<h4 class="loader">Predicting..</h4>`;
+          }, 4000);
+          setTimeout(function () {}, 3000);
+        });
+
+        const districtSelect = document.getElementById("option");
+        const temperatureInput = document.getElementById("temp");
+        const humidityInput = document.getElementById("humidity");
+
+        districtSelect.addEventListener("change", function () {
+          const district = districtSelect.value;
+          if (district) {
+            fetchWeatherData(district);
+          }
+        });
+
+        function fetchWeatherData(district) {
+          const apiKey = "2f9d1c6d7cb2bab7cae3c0e7511b1377";
+          const coords = getLatLonForDistrict(district);
+          const lat = coords.lat;
+          const lon = coords.lon;
+
+          url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}`;
+
+          fetch(url)
+            .then((res) => res.json())
+            .then((data) => {
+              let temp = Math.round((data.main.temp - 273.15) * 100) / 100;
+              console.log(temp);
+              console.log(districtSelect.value);
+              temperatureInput.value = temp;
+              humidityInput.value = data.main.humidity;
+            });
+
+          // api
+          // rainfallInput.value = "working";
+        }
+
+        function getLatLonForDistrict(district) {
+          const districts = {
+            Alipurduar: { lat: 26.5, lon: 89.5 },
+            Bankura: { lat: 23.25, lon: 87.07 },
+            Birbhum: { lat: 23.83, lon: 87.65 },
+            Cooch_Behar: { lat: 26.32, lon: 89.45 },
+            Dakshin_Dinajpur: { lat: 25.17, lon: 88.77 },
+            Darjeeling: { lat: 27.03, lon: 88.18 },
+            Hooghly: { lat: 22.9, lon: 88.39 },
+            Howrah: { lat: 22.59, lon: 88.31 },
+            Jalpaiguri: { lat: 26.52, lon: 88.73 },
+            Jhargram: { lat: 22.45, lon: 86.98 },
+            Kalimpong: { lat: 27.06, lon: 88.47 },
+            Kolkata: { lat: 22.57, lon: 88.36 },
+            Malda: { lat: 25.0, lon: 88.14 },
+            Murshidabad: { lat: 24.18, lon: 88.27 },
+            Nadia: { lat: 23.48, lon: 88.45 },
+            North_24_Parganas: { lat: 22.64, lon: 88.39 },
+            Paschim_Bardhaman: { lat: 23.68, lon: 87.45 },
+            Paschim_Medinipur: { lat: 22.43, lon: 87.32 },
+            Purba_Bardhaman: { lat: 23.25, lon: 87.85 },
+            Purba_Medinipur: { lat: 22.32, lon: 87.92 },
+            Purulia: { lat: 23.33, lon: 86.37 },
+            South_24_Parganas: { lat: 22.15, lon: 88.4 },
+            Uttar_Dinajpur: { lat: 25.62, lon: 87.82 },
+          };
+
+          return districts[district];
+        }
+      });
+
+      function nav() {
+        window.location.href = "http://127.0.0.1:8000";
+      }
+    </script>
+  </body>
+</html>
